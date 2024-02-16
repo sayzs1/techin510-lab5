@@ -49,7 +49,7 @@ def get_detail_page():
             row['title'] = html.unescape(re.findall(r'<h1 class="page-title" itemprop="headline">(.+?)</h1>', res.text)[0])
             datetime_venue = re.findall(r'<h4><span>.*?(\d{1,2}/\d{1,2}/\d{4})</span> \| <span>(.+?)</span></h4>', res.text)[0]
             row['date'] = datetime.datetime.strptime(datetime_venue[0], '%m/%d/%Y').replace(tzinfo=ZoneInfo('America/Los_Angeles')).isoformat()
-            row['venue'] = datetime_venue[1].strip()  # remove leading/trailing whitespaces
+            row['venue'] = datetime_venue[1].strip() # remove leading/trailing whitespaces
             metas = re.findall(r'<a href=".+?" class="button big medium black category">(.+?)</a>', res.text)
             row['category'] = html.unescape(metas[0])
             row['location'] = metas[1]
@@ -58,8 +58,9 @@ def get_detail_page():
             err.append(link)
             print(f'Error: {e}')
             print(f'Link: {link}')
-    if err:
-        links = [l for l in links if l not in err]
+    if len(err) > 0:
+        for link in err:
+            links.remove(link)
         json.dump(links, open(URL_LIST_FILE, 'w'))
     json.dump(data, open(URL_DETAIL_FILE, 'w'))
 
