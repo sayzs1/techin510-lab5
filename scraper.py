@@ -151,9 +151,13 @@ def insert_to_pg():
             row['windChill']
         ))
     
+    print('Committing changes...')
     conn.commit()
+
+    print('Closing cursor and connection...')
     cur.close()
     conn.close()
+    print('Data insertion completed.')
 
 if __name__ == '__main__':
     list_links()
