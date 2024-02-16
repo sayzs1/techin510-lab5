@@ -125,7 +125,7 @@ def insert_to_pg():
     conn = get_db_conn()
     cur = conn.cursor()
     cur.execute(q)
-
+    
     urls = json.load(open(URL_LIST_FILE, 'r'))
     data = json.load(open(URL_DETAIL_FILE, 'r'))
     for url, row in zip(urls, data):
@@ -135,19 +135,19 @@ def insert_to_pg():
         ON CONFLICT (url) DO NOTHING;
         '''
         cur.execute(q, (
-            url,
-            row['title'],
-            row['date'],
-            row['venue'],
-            row['category'],
-            row['location'],
-            row['lat'],
-            row['lon'],
-            row['condition'],
-            row['minTemperature'],
-            row['maxTemperature'],
+            url, 
+            row['title'], 
+            row['date'], 
+            row['venue'], 
+            row['category'], 
+            row['location'], 
+            row['lat'], 
+            row['lon'], 
+            row['condition'], 
+            row['minTemperature'], 
+            row['maxTemperature'], 
             row['windChill']
-        ))
+            ))
 
 if __name__ == '__main__':
     list_links()

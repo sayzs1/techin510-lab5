@@ -47,7 +47,8 @@ st.altair_chart(day_chart, use_container_width=True)
 st.sidebar.title("Filter Controls")
 
 # Dropdown to filter category
-selected_category = st.sidebar.selectbox("Select a category", df['category'].unique())
+all_categories_option = ["All"] + list(df['category'].unique())
+selected_category = st.sidebar.selectbox("Select a category", all_categories_option)
 
 # Get the minimum and maximum dates from the DataFrame
 min_date = min(df['date'])
@@ -58,10 +59,12 @@ start_date = st.sidebar.date_input("Select start date", min_value=min_date, max_
 end_date = st.sidebar.date_input("Select end date", min_value=min_date, max_value=max_date, value=max_date)
 
 # Filter by location
-selected_location = st.sidebar.selectbox("Select a location", df['location'].unique())
+all_locations_option = ["All"] + list(df['location'].unique())
+selected_location = st.sidebar.selectbox("Select a location", all_locations_option)
 
 # Optional: Filter by weather condition
-selected_weather_condition = st.sidebar.selectbox("Select a weather condition", df['weather_condition'].unique())
+all_conditions_option = ["All"] + list(df['condition'].unique())
+selected_weather_condition = st.sidebar.selectbox("Select a weather condition", all_conditions_option)
 
 # Convert start_date and end_date to datetime64[ns, UTC]
 start_date = pd.to_datetime(start_date, utc=True)
@@ -72,10 +75,13 @@ df['date'] = df['date'].dt.tz_localize(None)  # Remove timezone information if p
 df['date'] = df['date'].dt.tz_localize('UTC')  # Add UTC timezone
 
 # Apply filters to the data
-filtered_df = df[(df['category'] == selected_category) &
-                 (df['date'] >= start_date) &
-                 (df['date'] <= end_date) &
-                 (df['location'] == selected_location)]
+filtered_df = df[
+    ((selected_category == "All") | (df['category'] == selected_category)) &
+    (df['date'] >= start_date) &
+    (df['date'] <= end_date) &
+    ((selected_location == "All") | (df['location'] == selected_location)) &
+    ((selected_weather_condition == "All") | (df['condition'] == selected_weather_condition))
+]
 
 # Display the filtered data
 st.subheader("Filtered Events")
