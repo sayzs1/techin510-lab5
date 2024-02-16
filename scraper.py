@@ -106,7 +106,7 @@ def get_geo_weather():
     json.dump(data, open(URL_DETAIL_FILE, 'w'), indent=2)
 
 def insert_to_pg():
-    q = '''
+    q_create_table = '''
     CREATE TABLE IF NOT EXISTS events (
         url TEXT PRIMARY KEY,
         title TEXT,
@@ -122,35 +122,38 @@ def insert_to_pg():
         windchill FLOAT
     );
     '''
+
     conn = get_db_conn()
     cur = conn.cursor()
-    cur.execute(q)
-    
+    cur.execute(q_create_table)
+
     urls = json.load(open(URL_LIST_FILE, 'r'))
     data = json.load(open(URL_DETAIL_FILE, 'r'))
+
     for url, row in zip(urls, data):
-        q = '''
+        q_insert_data = '''
         INSERT INTO events (url, title, date, venue, category, location, latitude, longitude, condition, mintemperature, maxtemperature, windchill)
         VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         ON CONFLICT (url) DO NOTHING;
         '''
-        cur.execute(q, (
-            url, 
-            row['title'], 
-            row['date'], 
-            row['venue'], 
-            row['category'], 
-            row['location'], 
-            row['lat'], 
-            row['lon'], 
-            row['condition'], 
-            row['minTemperature'], 
-            row['maxTemperature'], 
+        cur.execute(q_insert_data, (
+            url,
+            row['title'],
+            row['date'],
+            row['venue'],
+            row['category'],
+            row['location'],
+            row['lat'],
+            row['lon'],
+            row['condition'],
+            row['minTemperature'],
+            row['maxTemperature'],
             row['windChill']
-            ))
-        conn.commit()
-        cur.close()
-        conn.close()
+        ))
+    
+    conn.commit()
+    cur.close()
+    conn.close()
 
 if __name__ == '__main__':
     list_links()
