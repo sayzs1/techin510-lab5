@@ -148,6 +148,9 @@ def insert_to_pg():
             row['maxTemperature'], 
             row['windChill']
             ))
+        conn.commit()
+        cur.close()
+        conn.close()
 
 if __name__ == '__main__':
     list_links()
